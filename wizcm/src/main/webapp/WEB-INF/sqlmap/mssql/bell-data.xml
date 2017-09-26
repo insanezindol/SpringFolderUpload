@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bell">
+
+	<select id="getBellInfo" parameterType="java.util.HashMap" resultType="com.wizcm.vo.tbl_bellcontent">
+		SELECT
+			CONTENTID, LID, ALBUM, ARTIST, TITLE, SONGWORD, G_CATE_ID, C_CATE_ID, REGIDATE, MODIDATE, SUB_COUNT, DELFLAG, LIDFLAG, ADULT, DOWN, SECONDID, AL_LID, AL_CATE_ID, DC_RATE, PACKAGEID, STATUS_LMP3, STATUS_RFIMM, STATUS_FRFIM, STATUS_FULLR, STATUS_FULLC, STATUS_EMP3 
+		FROM 
+			TBL_BELLCONTENT WITH(NOLOCK)
+		WHERE 
+			1=1 AND LID = #{lid}
+	</select>
+
+</mapper>

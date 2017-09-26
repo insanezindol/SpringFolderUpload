@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ring">
+
+	<select id="getRingInfo" parameterType="java.util.HashMap" resultType="com.wizcm.vo.tb_file_meta_info">
+		SELECT
+			METASEQ, SCP_ID, SUB_CPID, SCP_SVNAME, REGDATE, TITLE, SINGER, SCP, SUB_CP, XRING1, XRING2, XRING3, STATE, KTF_LID, FILE_COUNT, REALTITLE, REALSINGER, REALALBUM, KTF_MENU, LICENSE_YN, RW_LICENCE_TF, RWL_LICENCE_TF, RWF_LICENCE_TF, MW_LICENCE_TF, MWL_LICENCE_TF, PW_LICENCE_TF, PWL_LICENCE_TF, LRING1, LRING2, LRING3, CATCH_GBN, R19_LICENCE_TF
+		FROM
+			TB_FILE_META_INFO
+		WHERE
+			1=1 AND SCP_ID = 2044 AND KTF_LID = #{lid}
+	</select>
+	
+	<select id="getTotalRingPageInfo" parameterType="java.util.HashMap" resultType="integer">
+		SELECT
+			COUNT(1) CNT
+		FROM
+			TB_FILE_META_INFO
+		WHERE
+			1=1 AND SCP_ID = '2044' AND LICENSE_YN = 'T'
+	</select>
+	
+	<select id="getRingPageInfo" parameterType="java.util.HashMap" resultType="com.wizcm.vo.tb_file_meta_info">
+		SELECT 
+			s.*
+		FROM
+			(SELECT
+				ROWNUM AS RN, a.*
+			FROM
+				( SELECT
+					/*+ index(a IDX11_TB_FILE_META_INFO) */ METASEQ, SCP_ID, SUB_CPID, SCP_SVNAME, NVL(REGDATE,'00000000000000') REGDATE, TITLE, SINGER, SCP, SUB_CP, XRING1, XRING2, XRING3, STATE, KTF_LID, FILE_COUNT, REALTITLE, REALSINGER, REALALBUM, KTF_MENU, LICENSE_YN, RW_LICENCE_TF, RWL_LICENCE_TF, RWF_LICENCE_TF, MW_LICENCE_TF, MWL_LICENCE_TF, PW_LICENCE_TF, PWL_LICENCE_TF, LRING1, LRING2, LRING3, CATCH_GBN, R19_LICENCE_TF
+				FROM
+					TB_FILE_META_INFO
+				WHERE
+					1=1 AND SCP_ID = '2044' AND LICENSE_YN = 'T'
+				ORDER BY
+					REGDATE DESC ) a
+			) s
+		WHERE
+			1=1 AND s.RN BETWEEN #{startRow} AND #{endRow}
+	</select>
+
+</mapper>

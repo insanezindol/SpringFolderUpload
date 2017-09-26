@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<context:annotation-config />
+
+	<bean id="propertyPlaceholderConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:db.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+	
+	<!-- ring db -->
+	<bean id="ringDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${oracle.driverClassName}" />
+		<property name="url" value="${oracle.url}" />
+		<property name="username" value="${oracle.username}" />
+		<property name="password" value="${oracle.password}" />
+		<property name="maxActive" value="20" />
+		<property name="maxIdle" value="10" />
+		<property name="minIdle" value="5" />
+		<property name="maxWait" value="10000" />
+		<property name="validationQuery" value="select 1 from dual" />
+	</bean>
+	
+	<bean id="ringLogDataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="ringDataSource" />
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE" />
+				<property name="sqlPrefix" value="SQL :: " />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="ringSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<qualifier value="ringDBFactory" />
+		<property name="dataSource" ref="ringLogDataSource" />
+		<property name="mapperLocations" value="/WEB-INF/sqlmap/oracle/*.xml" />
+		<property name="configLocation" value="/WEB-INF/spring/oracle-config.xml" />
+		<property name="transactionFactory">
+			<bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="ringSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<qualifier value="ringDB" />
+		<constructor-arg ref="ringSqlSessionFactory" />
+	</bean>
+	<!--// ring db -->
+	
+	
+	
+	<!-- ringstat db -->
+	<bean id="ringstatDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${oracle_stat.driverClassName}" />
+		<property name="url" value="${oracle_stat.url}" />
+		<property name="username" value="${oracle_stat.username}" />
+		<property name="password" value="${oracle_stat.password}" />
+		<property name="maxActive" value="20" />
+		<property name="maxIdle" value="10" />
+		<property name="minIdle" value="5" />
+		<property name="maxWait" value="10000" />
+		<property name="validationQuery" value="select 1 from dual" />
+	</bean>
+	
+	<bean id="ringstatLogDataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="ringstatDataSource" />
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE" />
+				<property name="sqlPrefix" value="SQL :: " />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="ringstatSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<qualifier value="ringstatDBFactory" />
+		<property name="dataSource" ref="ringstatLogDataSource" />
+		<property name="mapperLocations" value="/WEB-INF/sqlmap/oracle/*.xml" />
+		<property name="configLocation" value="/WEB-INF/spring/oracle-config.xml" />
+		<property name="transactionFactory">
+			<bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="sqlSessionOracleStat" class="org.mybatis.spring.SqlSessionTemplate">
+		<qualifier value="ringstatDB" />
+		<constructor-arg ref="ringstatSqlSessionFactory" />
+	</bean>
+	<!--// ringstat db -->
+	
+	
+	
+	<!-- ktmusic db -->
+	<bean id="ktmusicDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${oracle_ktmusic.driverClassName}" />
+		<property name="url" value="${oracle_ktmusic.url}" />
+		<property name="username" value="${oracle_ktmusic.username}" />
+		<property name="password" value="${oracle_ktmusic.password}" />
+		<property name="maxActive" value="20" />
+		<property name="maxIdle" value="10" />
+		<property name="minIdle" value="5" />
+		<property name="maxWait" value="10000" />
+		<property name="validationQuery" value="select 1 from dual" />
+	</bean>
+	
+	<bean id="ktmusicLogDataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="ktmusicDataSource" />
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE" />
+				<property name="sqlPrefix" value="SQL :: " />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="ktmusicSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<qualifier value="ktmusicDBFactory" />
+		<property name="dataSource" ref="ktmusicLogDataSource" />
+		<property name="mapperLocations" value="/WEB-INF/sqlmap/oracle/*.xml" />
+		<property name="configLocation" value="/WEB-INF/spring/oracle-config.xml" />
+		<property name="transactionFactory">
+			<bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="sqlSessionOracleKtmusic" class="org.mybatis.spring.SqlSessionTemplate">
+		<qualifier value="ktmusicDB" />
+		<constructor-arg ref="ktmusicSqlSessionFactory" />
+	</bean>
+	<!--// ktmusic db -->
+	
+	
+	<!-- bell db -->
+	<bean id="bellDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${mssql.driverClassName}" />
+		<property name="url" value="${mssql.url}" />
+		<property name="username" value="${mssql.username}" />
+		<property name="password" value="${mssql.password}" />
+		<property name="maxActive" value="20" />
+		<property name="maxIdle" value="10" />
+		<property name="minIdle" value="5" />
+		<property name="maxWait" value="10000" />
+		<property name="validationQuery" value="select 1" />
+	</bean>
+	
+	<bean id="bellLogDataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="bellDataSource" />
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE" />
+				<property name="sqlPrefix" value="SQL :: " />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="bellSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<qualifier value="bellDBFactory" />
+		<property name="dataSource" ref="bellLogDataSource" />
+		<property name="mapperLocations" value="/WEB-INF/sqlmap/mssql/*.xml" />
+		<property name="configLocation" value="/WEB-INF/spring/mssql-config.xml" />
+		<property name="transactionFactory">
+			<bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="sqlSessionMssql" class="org.mybatis.spring.SqlSessionTemplate">
+		<qualifier value="bellDB" />
+		<constructor-arg ref="bellSqlSessionFactory" />
+	</bean>
+	<!--// bell db -->
+	
+	
+	
+	<!-- bell log db -->
+	<bean id="belllogDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${mssql.driverClassName}" />
+		<property name="url" value="${mssql_logs.url}" />
+		<property name="username" value="${mssql_logs.username}" />
+		<property name="password" value="${mssql_logs.password}" />
+		<property name="maxActive" value="20" />
+		<property name="maxIdle" value="10" />
+		<property name="minIdle" value="5" />
+		<property name="maxWait" value="10000" />
+		<property name="validationQuery" value="select 1" />
+	</bean>
+	
+	<bean id="belllogLogDataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="belllogDataSource" />
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE" />
+				<property name="sqlPrefix" value="SQL :: " />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="belllogSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<qualifier value="belllogDBFactory" />
+		<property name="dataSource" ref="belllogLogDataSource" />
+		<property name="mapperLocations" value="/WEB-INF/sqlmap/mssql/*.xml" />
+		<property name="configLocation" value="/WEB-INF/spring/mssql-config.xml" />
+		<property name="transactionFactory">
+			<bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="sqlSessionMssqlLogs" class="org.mybatis.spring.SqlSessionTemplate">
+		<qualifier value="bellLogDB" />
+		<constructor-arg ref="belllogSqlSessionFactory" />
+	</bean>
+	<!--// bell log db -->
+	
+	
+	
+	<!-- bell etc db -->
+	<bean id="belletcDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${mssql_etc.driverClassName}" />
+		<property name="url" value="${mssql_etc.url}" />
+		<property name="username" value="${mssql_etc.username}" />
+		<property name="password" value="${mssql_etc.password}" />
+		<property name="maxActive" value="20" />
+		<property name="maxIdle" value="10" />
+		<property name="minIdle" value="5" />
+		<property name="maxWait" value="10000" />
+		<property name="validationQuery" value="select 1" />
+	</bean>
+	
+	<bean id="belletcLogDataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+		<constructor-arg ref="belletcDataSource" />
+		<property name="logFormatter">
+			<bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+				<property name="loggingType" value="MULTI_LINE" />
+				<property name="sqlPrefix" value="SQL :: " />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="belletcSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<qualifier value="belletcDBFactory" />
+		<property name="dataSource" ref="belletcLogDataSource" />
+		<property name="mapperLocations" value="/WEB-INF/sqlmap/mssql/*.xml" />
+		<property name="configLocation" value="/WEB-INF/spring/mssql-config.xml" />
+		<property name="transactionFactory">
+			<bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
+		</property>
+	</bean>
+	
+	<bean id="sqlSessionMssqlEtc" class="org.mybatis.spring.SqlSessionTemplate">
+		<qualifier value="bellEtcDB" />
+		<constructor-arg ref="belletcSqlSessionFactory" />
+	</bean>
+	<!--// bell etc db -->
+	
+	
+</beans>
